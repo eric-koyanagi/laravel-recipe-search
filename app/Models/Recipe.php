@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\SearchTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,6 +13,11 @@ class Recipe extends Model
 {
     use HasFactory;
     use UniqueSlugTrait;
+
+    public static function GetPage(SearchTypeEnum $searchType, $page, $query) : array
+    {
+
+    }
 
     public function ingredients(): HasMany
     {

@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ingredients', function (Blueprint $table) {
+        Schema::create('measurements', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('recipe_id');
-            $table->foreign('recipe_id')->references('id')->on('recipes')->onDelete('cascade');
-            $table->string('name')->fulltext();
-            $table->float('qty');
+            $table->string("unit")->unique();
             $table->timestamps();
+        });
+
+        Schema::table('ingredients', function (Blueprint $table) {
+            $table->unsignedBigInteger('measurement_id');
+            $table->foreign('measurement_id')->references('id')->on('measurements');
         });
     }
 
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ingredients');
+        Schema::dropIfExists('measurements');
     }
 };
