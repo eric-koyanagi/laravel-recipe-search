@@ -4,21 +4,31 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Enum\SearchTypeEnum;
+use App\Models\Recipe;
 
 class RecipeController extends Controller
 {
-    const START_PAGE = 1;
+    const RECIPES_PER_PAGE = 30;
 
-    public function search(Request $request, SearchTypeEnum $searchType): array
+    public function search(Request $request): array
     {
-        $query = $request->get('search');
-        //$page = $request->get('page') ?? self::START_PAGE;
-
-        //$searchResults = Recipe::GetPage($searchType, $page, $query);
+        $query = Recipe::BuildSearchQuery(
+            $request->get('s') ?? "",
+            $request->get('searchFlags') ?? []
+        )->paginate(self::RECIPES_PER_PAGE);
 
         return [
-            'phrase' => $query,
-            'type' => $searchType
+            'results' => $query,
+        ];
+    }
+
+    public function show(Request $request, $id): array
+    {
+        $recipe = Recipe::find($id);
+        return [
+            'recipe' => $recipe,
+            'ingredients' => $recipe->ingredients,
+            'steps' => $recipe->steps,
         ];
     }
 }

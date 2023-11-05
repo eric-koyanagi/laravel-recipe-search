@@ -6,4 +6,5 @@ enum SearchTypeEnum: string {
     case AuthorEmail = 'author';
     case Keyword = 'keyword';
     case Ingredient = 'ingredient';
+    case None = 'none';
 }
