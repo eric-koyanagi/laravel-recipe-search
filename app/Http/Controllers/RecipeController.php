@@ -14,7 +14,7 @@ class RecipeController extends Controller
     {
         $query = Recipe::BuildSearchQuery(
             $request->get('s') ?? "",
-            $request->get('searchFlags') ?? []
+            $this->getSearchFlags($request)
         )->paginate(self::RECIPES_PER_PAGE);
 
         return [
@@ -30,5 +30,15 @@ class RecipeController extends Controller
             'ingredients' => $recipe->ingredients,
             'steps' => $recipe->steps,
         ];
+    }
+
+    protected function getSearchFlags($request) {
+        $types = [
+            SearchTypeEnum::AuthorEmail->value => $request->get('authors'),
+            SearchTypeEnum::Keyword->value => $request->get('keywords'),
+            SearchTypeEnum::Ingredient->value => $request->get('ingredients'),
+        ];
+
+        return empty($types) ? [] : $types;
     }
 }
