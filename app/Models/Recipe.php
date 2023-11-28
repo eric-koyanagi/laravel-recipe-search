@@ -53,10 +53,12 @@ class Recipe extends Model
 
     protected static function GetKeywordSearch(Builder $query, string $searchPhrase): Builder
     {
-        return $query->where('recipes.name', $searchPhrase)
-            ->orWhereFullText('recipes.description', $searchPhrase)
-            ->orWhere('ingredients.name', 'LIKE', "%$searchPhrase%")
-            ->orWhereFullText('steps.description', $searchPhrase);
+        return $query->where(function (Builder $query) use ($searchPhrase) {
+            $query->where('recipes.name', $searchPhrase)
+                ->orWhereFullText('recipes.description', $searchPhrase)
+                ->orWhere('ingredients.name', 'LIKE', "%$searchPhrase%")
+                ->orWhereFullText('steps.description', $searchPhrase);
+        });
     }
 
     protected static function GetIngredientSearch(Builder $query, string $searchPhrase): Builder

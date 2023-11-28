@@ -32,13 +32,17 @@ class RecipeController extends Controller
         ];
     }
 
-    protected function getSearchFlags($request) {
-        $types = [
-            SearchTypeEnum::AuthorEmail->value => $request->get('authors'),
-            SearchTypeEnum::Keyword->value => $request->get('keywords'),
-            SearchTypeEnum::Ingredient->value => $request->get('ingredients'),
-        ];
+    protected function getSearchFlags($request): array {
+        $flags = [];
+        $this->addToFlagsIfEnabled($flags, SearchTypeEnum::AuthorEmail->value, $request->get('authors'));
+        $this->addToFlagsIfEnabled($flags, SearchTypeEnum::Keyword->value, $request->get('keywords'));
+        $this->addToFlagsIfEnabled($flags, SearchTypeEnum::Ingredient->value, $request->get('ingredients'));
+        return $flags;
+    }
 
-        return empty($types) ? [] : $types;
+    protected function addToFlagsIfEnabled(&$arr, $key, $on) {
+        if ($on === "1") {
+            $arr[$key] = "1";
+        }
     }
 }
