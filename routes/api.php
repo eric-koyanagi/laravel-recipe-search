@@ -20,5 +20,5 @@ use App\Enum\SearchTypeEnum;
 //    return $request->user();
 //});
 
-Route::get('/recipes', [RecipeController::class, 'search']);
+Route::post('/recipes', [RecipeController::class, 'search']);
 Route::get('/recipes/{id}', [RecipeController::class, 'show']);

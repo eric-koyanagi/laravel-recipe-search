@@ -1,37 +1,27 @@
 <template>
   <RainbowCard>
-      <div>
-        <input id="authors" v-model="authors" type="checkbox" checked>
-        <label for="authors">Search Authors</label>
-      </div>
+    <RecipeSearchInput type="author" @update="updateValues"/>
+    <RecipeSearchInput type="keyword" @update="updateValues"/>
+    <RecipeSearchInput type="ingredient" @update="updateValues"/>
 
-      <div>
-        <input id="keywords" v-model="keywords" type="checkbox">
-        <label for="keywords">Search Keywords</label>
-      </div>
-
-      <div>
-        <input id="ingredients" v-model="ingredients" type="checkbox">
-        <label for="ingredients">Search Ingredients</label>
-      </div>
-
-      <div class="my-2">
-        <input v-model.lazy="searchQuery" placeholder="Search Recipes">
-        <button @click="sendSearchToParent" class="bg-stone-300 ml-1 rounded px-2">Search</button>
-      </div>
+    <div class="my-2">
+      <!--<input v-model.lazy="searchQuery" placeholder="Search Recipes" class="p-2 shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg">-->
+      <button @click="sendSearchToParent" class="bg-stone-300 rounded p-2 text-sm shadow-sm hover:bg-cyan-600">Search</button>
+    </div>
   </RainbowCard>
 </template>
 
 <script setup>
-
 const emit = defineEmits(['search']);
-const searchQuery = ref('');
-const authors = ref('');
-const keywords = ref('');
-const ingredients = ref('');
+let searchSettings = {};
+
+const updateValues = (vals) => {
+  searchSettings[vals.type] = { enabled: vals?.showInput, val: vals?.inputValue};
+  console.log("all vals", searchSettings);
+}
 
 const sendSearchToParent = () => {
-  emit('search', searchQuery, authors, keywords, ingredients);
+  emit('search', searchSettings);
 };
 
 </script>

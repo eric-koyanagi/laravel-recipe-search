@@ -16,21 +16,24 @@ class Recipe extends Model
     use HasFactory;
     use UniqueSlugTrait;
 
-    public static function BuildSearchQuery(string $searchPhrase, array $searchTypes): ?Builder
+    public static function BuildSearchQuery(array $searchSettings): ?Builder
     {
+        // TODO this is wrong because grouped elements like ingredients only search the last item in the group....
         $query = DB::table('recipes')
             ->leftJoin('ingredients', 'recipes.id', '=', 'ingredients.recipe_id')
             ->leftJoin('steps', 'recipes.id', '=', 'steps.recipe_id')
             ->select('recipes.*')
             ->groupBy('recipes.id');
 
-        foreach ($searchTypes as $searchType => $on) {
-            $query = match ($searchType) {
-                SearchTypeEnum::AuthorEmail->value => self::GetAuthorSearch($query, $searchPhrase),
-                SearchTypeEnum::Keyword->value => self::GetKeywordSearch($query, $searchPhrase),
-                SearchTypeEnum::Ingredient->value => self::GetIngredientSearch($query, $searchPhrase),
-                default => $query,
-            };
+        foreach ($searchSettings as $searchType => $searchSetting) {
+            if ($searchSetting["enabled"]) {
+                $query = match ($searchType) {
+                    SearchTypeEnum::AuthorEmail->value => self::GetAuthorSearch($query, $searchSetting["val"]),
+                    SearchTypeEnum::Keyword->value => self::GetKeywordSearch($query, $searchSetting["val"]),
+                    SearchTypeEnum::Ingredient->value => self::GetIngredientSearch($query, $searchSetting["val"]),
+                    default => $query,
+                };
+            }
         }
 
         return $query;
@@ -63,7 +66,7 @@ class Recipe extends Model
 
     protected static function GetIngredientSearch(Builder $query, string $searchPhrase): Builder
     {
-        return $query->orWhere('ingredients.name', 'LIKE', "%$searchPhrase%");
+        return $query->where('ingredients.name', 'LIKE', "%$searchPhrase%");
 
     }
 

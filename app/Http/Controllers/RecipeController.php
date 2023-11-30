@@ -12,10 +12,9 @@ class RecipeController extends Controller
 
     public function search(Request $request): array
     {
-        $query = Recipe::BuildSearchQuery(
-            $request->get('s') ?? "",
-            $this->getSearchFlags($request)
-        )->paginate(self::RECIPES_PER_PAGE);
+        //return $request->get('authors')["enabled"];
+
+        $query = Recipe::BuildSearchQuery($request->all())->paginate(self::RECIPES_PER_PAGE);
 
         return [
             'results' => $query,
@@ -40,9 +39,9 @@ class RecipeController extends Controller
         return $flags;
     }
 
-    protected function addToFlagsIfEnabled(&$arr, $key, $on) {
-        if ($on === "1") {
-            $arr[$key] = "1";
+    protected function addToFlagsIfEnabled(&$arr, $key, $requestObj) {
+        if ($requestObj["enabled"]) {
+            $arr[$key] = $requestObj;
         }
     }
 }

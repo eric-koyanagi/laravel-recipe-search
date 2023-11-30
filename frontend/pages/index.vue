@@ -48,10 +48,14 @@ import { ref } from 'vue';
 const recipes = ref([]);
 const error = ref("");
 
-const doSearch = async(query, authors, keywords, ingredients) => {
+const doSearch = async(searchSettings) => {
+  console.log("Doing search ", searchSettings)
+
+  // TODO convert to POST so taht each type is passed as its own search string; empty string for no data, do not pass at all for unselected
   await useFetch(api.index('recipes'),
       {
-        query: { s: query, authors, keywords, ingredients },
+        method: 'POST',
+        body: searchSettings,
         onResponse({ request, response, options }) {
           recipes.value = response._data.results;
         },
